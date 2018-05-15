@@ -1,4 +1,15 @@
-#!/usr/bin/python -u
+"""
+XML toolkit from the GNOME project
+------------
+libxml2-python package with fix for python-libvirt. It supports 2.x and 3.x versions.
+
+Links
+------
+- `github <https://github.com/GNOME/libxml2>`_
+- `xmlsoft.org <http://xmlsoft.org/>`_
+"""
+
+#!/usr/bin/env python
 #
 # Setup script for libxml2 and libxslt if found
 #
@@ -88,9 +99,11 @@ libdirs = [
 os.path.join(ROOT,'lib'),
 ]
 
-xml_files = ["libxml2-api.xml", "libxml2-python-api.xml",
-             "libxml.c", "libxml.py", "libxml_wrap.h", "types.c",
-             "xmlgenerator.py", "README", "TODO", "drv_libxml2.py"]
+xml_files = ["Makefile.am", "README", "TODO", "drv_libxml2.py",
+             "generator.py", "libxml.c", "libxml.py", "libxml2-export.c",
+             "libxml2-py.c", "libxml2-py.h", "libxml2-python-api.xml",
+             "libxml2.py", "libxml2class.py", "libxml2class.txt",
+             "libxml_wrap.h", "types.c"]
 
 xslt_files = ["libxslt-api.xml", "libxslt-python-api.xml",
              "libxslt.c", "libxsl.py", "libxslt_wrap.h",
@@ -223,7 +236,7 @@ else:
     ext_package = None
     data_files = []
 
-setup (name = "libxml2-python",
+setup (name = "libxml2-python3",
        # On *nix, the version number is created from setup.py.in
        # On windows, it is set by configure.js
        version = "2.9.5",
@@ -231,7 +244,7 @@ setup (name = "libxml2-python",
        author = "Daniel Veillard",
        author_email = "veillard@redhat.com",
        url = "http://xmlsoft.org/python.html",
-       licence="MIT Licence",
+       license="MIT Licence",
        py_modules=modules,
        ext_modules=extens,
        ext_package=ext_package,
