@@ -530,7 +530,7 @@ class xmlCoreDepthFirstItertor:
         self.parents = []
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         while 1:
             if self.node:
                 ret = self.node
@@ -542,6 +542,7 @@ class xmlCoreDepthFirstItertor:
             except IndexError:
                 raise StopIteration
             self.node = parent.next
+    next = __next__
 
 #
 # implements the breadth-first iterator for libxml2 DOM tree
@@ -552,7 +553,7 @@ class xmlCoreBreadthFirstItertor:
         self.parents = []
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         while 1:
             if self.node:
                 ret = self.node
@@ -564,6 +565,7 @@ class xmlCoreBreadthFirstItertor:
             except IndexError:
                 raise StopIteration
             self.node = parent.children
+    next = __next__
 
 #
 # converters to present a nicer view of the XPath returns
@@ -2065,7 +2067,7 @@ def UTF8Strpos(utf, pos):
 
 def UTF8Strsize(utf, len):
     """storage size of an UTF8 string the behaviour is not
-       garanteed if the input string is not UTF-8 """
+       guaranteed if the input string is not UTF-8 """
     ret = libxml2mod.xmlUTF8Strsize(utf, len)
     return ret
 
@@ -3363,8 +3365,10 @@ class xmlNode(xmlCore):
     def newNs(self, href, prefix):
         """Creation of a new Namespace. This function will refuse to
           create a namespace with a similar prefix than an existing
-          one present on this node. We use href==None in the case of
-           an element creation where the namespace was not defined. """
+          one present on this node. Note that for a default
+          namespace, @prefix should be None.  We use href==None in
+          the case of an element creation where the namespace was not
+           defined. """
         ret = libxml2mod.xmlNewNs(self._o, href, prefix)
         if ret is None:raise treeError('xmlNewNs() failed')
         __tmp = xmlNs(_obj=ret)
@@ -7337,7 +7341,7 @@ class xpathContext:
         return xpathObjectRet(ret)
 
     def xpathEvalExpression(self, str):
-        """Evaluate the XPath expression in the given context. """
+        """Alias for xmlXPathEval(). """
         ret = libxml2mod.xmlXPathEvalExpression(str, self._o)
         if ret is None:raise xpathError('xmlXPathEvalExpression() failed')
         return xpathObjectRet(ret)
@@ -7828,7 +7832,8 @@ class xpathParserContext:
         """Implement the round() XPath function number round(number)
           The round function returns the number that is closest to
           the argument and that is an integer. If there are two such
-           numbers, then the one that is even is returned. """
+          numbers, then the one that is closest to positive infinity
+           is returned. """
         libxml2mod.xmlXPathRoundFunction(self._o, nargs)
 
     def xpathStartsWithFunction(self, nargs):
@@ -7982,7 +7987,9 @@ class xpathParserContext:
         libxml2mod.xmlXPtrEvalRangePredicate(self._o)
 
     def xpointerRangeToFunction(self, nargs):
-        """Implement the range-to() XPointer function """
+        """Implement the range-to() XPointer function  Obsolete.
+          range-to is not a real function but a special type of
+           location step which is handled in xpath.c. """
         libxml2mod.xmlXPtrRangeToFunction(self._o, nargs)
 
 # xlinkShow
@@ -8002,6 +8009,7 @@ XML_BUFFER_ALLOC_EXACT = 2
 XML_BUFFER_ALLOC_IMMUTABLE = 3
 XML_BUFFER_ALLOC_IO = 4
 XML_BUFFER_ALLOC_HYBRID = 5
+XML_BUFFER_ALLOC_BOUNDED = 6
 
 # xmlParserSeverities
 XML_PARSER_SEVERITY_VALIDITY_WARNING = 1
